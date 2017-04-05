@@ -81,4 +81,17 @@ public class User {
     }
   }
 
+  public static User findByEmail(String email) {
+    try (Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM users WHERE email = :email;";
+      User user = con.createQuery(sql)
+        .addParameter("email", email)
+        .executeAndFetchFirst(User.class);
+      if (user == null) {
+        throw new IllegalArgumentException("No user with that email.");
+      }
+      return user;
+    }
+  }
+
 }
