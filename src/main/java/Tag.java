@@ -96,4 +96,14 @@ public class Tag {
     }
   }
 
+  public static List<Post> search(String input) {
+    String newInput = "%" + input + "%";
+    try (Connection con = DB.sql2o.open()) {
+      String sql = "SELECT posts.* FROM posts JOIN posts_tags ON (posts.id = posts_tags.postId) JOIN tags ON (posts_tags.tagId = tags.id) WHERE lower(tags.name) LIKE lower(:newInput);";
+      return con.createQuery(sql)
+        .addParameter("newInput", newInput)
+        .executeAndFetch(Post.class);
+    }
+  }
+
 }

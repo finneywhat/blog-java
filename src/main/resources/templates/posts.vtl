@@ -1,14 +1,16 @@
-<div class="row">
-  <div class="col-md-8 col-md-offset-2">
-    #foreach($post in $posts)
-      <div class="well">
+#foreach($post in $posts)
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1 ">
         <h3><a href="/users/$post.getUserId()/posts/$post.getId()">$post.getTitle()</a></h3>
         <p>
           #foreach($tag in $post.getTags())
-            <span class="label label-info">$tag.getName()</span>
+            <a class="tagLink" href="/tags/$tag.getId()/posts"><span class="label label-info">$tag.getName()</span></a>
           #end
         </p>
+        <p class="content">$post.getContent()</p>
+        <hr>
       </div>
-    #end
+    </div>
   </div>
-</div>
+#end

@@ -1,18 +1,19 @@
-<div class="row">
-  <div class="col-md-8 col-md-offset-2">
-    #if($user.getId() == $post.getUserId())
-      <button type="button" class="btn btn-default" data-toggle="modal" data-target="#postEditModal">Edit Post</button>
-    #end
-    <h2>$post.getTitle()</h2>
-    <p>
-      #foreach($tag in $post.getTags())
-        <span class="label label-info">$tag.getName()</span>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      #if($user.getId() == $post.getUserId())
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#postEditModal">Edit Post</button>
       #end
-    </p>
-    <p>$post.getContent()</p>
+      <h2>$post.getTitle()</h2>
+      <p>
+        #foreach($tag in $post.getTags())
+          <a class="tagLink" href="/tags/$tag.getId()/posts"><span class="label label-info">$tag.getName()</span></a>
+        #end
+      </p>
+      <p>$post.getContent()</p>
+    </div>
   </div>
 </div>
-
 <div class="modal fade" id="postEditModal" tabindex="-1" role="dialog" aria-labelledby="postEditModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -25,19 +26,6 @@
           <div class="form-group">
             <label for="title">Title</label>
             <input value="$post.getTitle()" type="text" name="title" class="form-control" required>
-            <!-- <div class="dropdown">
-              <button id="tagSelect" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tags <span class="caret"></span></button>
-              <div class="dropdown-menu" aria-labelledby="tagSelect">
-                #foreach($tag in $tags)
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" name="tags" value="$tag.getId()">
-                      $tag.getName()
-                    </label>
-                  </div>
-                #end
-              </div>
-            </div> -->
           </div>
           <div class="form-group">
             <label for="content">Content</label>

@@ -3,6 +3,10 @@ import java.util.HashMap;
 import spark.ModelAndView;
 import spark.template.velocity.VelocityTemplateEngine;
 import static spark.Spark.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class App {
   public static void main(String[] args) {
@@ -99,6 +103,34 @@ public class App {
       Tag newTag = new Tag(tagname);
       newTag.save();
       response.redirect(request.headers("Referer"));
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    get("/tags/:id/posts", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      Tag tag = Tag.find(Integer.parseInt(request.params(":id")));
+      model.put("posts", tag.getPosts());
+      model.put("user", request.session().attribute("user"));
+      model.put("template", "templates/posts.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    get("/search", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      String searchInput = request.queryParams("searchInput");
+      Set<Post> results = new HashSet<Post>();
+      List<Post> postresult = Post.search(searchInput);
+      List<Post> tagresult = Tag.search(searchInput);
+      System.out.println(postresult);
+      System.out.println(tagresult);
+      results.addAll(postresult);
+      results.addAll(tagresult);
+      System.out.println(results);
+      Post[] posts = results.toArray(new Post[0]);
+      System.out.println(posts);
+      model.put("posts", posts);
+      model.put("user", request.session().attribute("user"));
+      model.put("template", "templates/posts.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 

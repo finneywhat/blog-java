@@ -143,4 +143,15 @@ public class Post {
     }
   }
 
+  public static List<Post> search(String input) {
+    String newInput = "%" + input + "%";
+    try (Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM posts WHERE lower(title) LIKE lower(:newInput);";
+      // String sql = "SELECT * FROM posts WHERE lower(title) LIKE lower(:newInput) OR lower(content) LIKE lower(:newInput);";
+      return con.createQuery(sql)
+        .addParameter("newInput", newInput)
+        .executeAndFetch(Post.class);
+    }
+  }
+
 }

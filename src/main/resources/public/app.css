@@ -13,3 +13,14 @@ body {
 #tagSelect > div {
   margin: 15px;
 }
+
+.content {
+  height: 62px;
+  white-space: pre-wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tagLink:hover {
+  text-decoration: none;
+}
