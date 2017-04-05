@@ -11,10 +11,12 @@ public class Post {
   private String title;
   private int id;
   private String content;
+  private int userId;
 
-  public Post(String title, String content) {
+  public Post(String title, String content, int userId) {
     this.title = title;
     this.content = content;
+    this.userId = userId;
   }
 
   public String getTitle() {
@@ -29,6 +31,10 @@ public class Post {
     return this.id;
   }
 
+  public int getUserId() {
+    return this.userId;
+  }
+
   @Override
   public boolean equals(Object otherPost) {
     if (!(otherPost instanceof Post)) {
@@ -37,16 +43,18 @@ public class Post {
       Post newPost = (Post) otherPost;
       return this.getTitle().equals(newPost.getTitle()) &&
              this.getContent().equals(newPost.getContent()) &&
+             this.getUserId() == newPost.getUserId() &&
              this.getId() == newPost.getId();
     }
   }
 
   public void save() {
     try (Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO posts (title, content) VALUES (:title, :content);";
+      String sql = "INSERT INTO posts (title, content, userId) VALUES (:title, :content, :userId);";
       this.id = (int) con.createQuery(sql, true)
         .addParameter("title", this.title)
         .addParameter("content", this.content)
+        .addParameter("userId", this.userId)
         .executeUpdate()
         .getKey();
     }
@@ -83,6 +91,12 @@ public class Post {
   }
 
   public void delete() {
+    try (Connection con = DB.sql2o.open()) {
+      String sql = "DELETE FROM posts_tags WHERE postId = :id;";
+      con.createQuery(sql)
+        .addParameter("id", this.id)
+        .executeUpdate();
+    }
     try (Connection con = DB.sql2o.open()) {
       String sql = "DELETE FROM posts WHERE id = :id;";
       con.createQuery(sql)

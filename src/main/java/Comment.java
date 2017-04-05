@@ -11,10 +11,12 @@ public class Comment {
   private String content;
   private int id;
   private int postId;
+  private int userId;
 
-  public Comment(String content, int postId) {
+  public Comment(String content, int postId, int userId) {
     this.content = content;
     this.postId = postId;
+    this.userId = userId;
   }
 
   public String getContent() {
@@ -29,6 +31,10 @@ public class Comment {
     return this.postId;
   }
 
+  public int getUserId() {
+    return this.userId;
+  }
+
   @Override
   public boolean equals(Object otherComment) {
     if (!(otherComment instanceof Comment)) {
@@ -37,16 +43,18 @@ public class Comment {
       Comment newComment = (Comment) otherComment;
       return this.getContent().equals(newComment.getContent()) &&
              this.getPostId() == newComment.getPostId() &&
+             this.getUserId() == newComment.getUserId() &&
              this.getId() == newComment.getId();
     }
   }
 
   public void save() {
     try (Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO comments (content, postId) VALUES (:content, :postId);";
+      String sql = "INSERT INTO comments (content, postId, userId) VALUES (:content, :postId, :userId);";
       this.id = (int) con.createQuery(sql, true)
         .addParameter("content", this.content)
         .addParameter("postId", this.postId)
+        .addParameter("userId", this.userId)
         .executeUpdate()
         .getKey();
     }

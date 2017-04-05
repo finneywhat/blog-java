@@ -9,6 +9,39 @@
     <script src="/js/scripts.js"></script>
   </head>
   <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Home</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li><a href="/posts">Browse Posts</a></li>
+          #if($user)
+            <li><a href="/users/$user.getId()/posts/new">Add a Post</a></li>
+          #end
+        </ul>
+        #if($user)
+          <p class="navbar-text navbar-right">Signed in with <a href="/users/$user.getId()">$user.getEmail()</a></p>
+        #else
+          <button class="btn btn-default navbar-btn navbar-right" id="loginLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Login <span class="caret"></span></button>
+          <form id="loginForm" class="dropdown-menu pull-right" aria-labelledby="loginLabel" action="/login" method="post">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="text" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-block btn-success">Login</button>
+            </div>
+          </form>
+        #end
+        <form class="navbar-form navbar-right" action="/search">
+          <div class="form-group">
+            <input type="text" name="searchInput" class="form-control" placeholder="search blogs and tags" required>
+          </div>
+          <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+        </form>
+      </div>
+    </nav>
     <!-- begin inner template-->
     <div class="container">
       #parse( $template )

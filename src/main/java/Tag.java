@@ -74,6 +74,12 @@ public class Tag {
 
   public void delete() {
     try (Connection con = DB.sql2o.open()) {
+      String sql = "DELETE FROM posts_tags WHERE tagId = :id;";
+      con.createQuery(sql)
+        .addParameter("id", this.id)
+        .executeUpdate();
+    }
+    try (Connection con = DB.sql2o.open()) {
       String sql = "DELETE FROM tags WHERE id = :id;";
       con.createQuery(sql)
         .addParameter("id", this.id)

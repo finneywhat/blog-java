@@ -90,14 +90,26 @@ public class TagTest {
   }
 
   @Test
+  public void delete_removesEntriesInJoinTable() {
+    Post testPost = new Post("my travels", "travel blog post content", 1);
+    testPost.save();
+    Tag testTag1 = new Tag("Travel");
+    testTag1.save();
+    testPost.addTag(testTag1);
+    assertTrue(testPost.getTags().contains(testTag1));
+    testTag1.delete();
+    assertFalse(testPost.getTags().contains(testTag1));
+  }
+
+  @Test
   public void getPosts_getsAllPostsWithTag() {
     Tag testTag = new Tag("Travel");
     testTag.save();
-    Post testPost1 = new Post("my travels", "travel blog post content");
+    Post testPost1 = new Post("my travels", "travel blog post content", 1);
     testPost1.save();
-    Post testPost2 = new Post("my other travels", "more travel blog post content");
+    Post testPost2 = new Post("my other travels", "more travel blog post content", 1);
     testPost2.save();
-    Post testPost3 = new Post("my workouts", "workout blog post content");
+    Post testPost3 = new Post("my workouts", "workout blog post content", 1);
     testPost3.save();
     testPost1.addTag(testTag);
     testPost2.addTag(testTag);
