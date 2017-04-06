@@ -54,6 +54,25 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
+    get("/users/:id", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      model.put("user", request.session().attribute("user"));
+      model.put("userProfile", User.find(Integer.parseInt(request.params(":id"))));
+      model.put("template", "templates/user.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/users/:id/update", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      User user = User.find(Integer.parseInt(request.params(":id")));
+      String name = request.queryParams("userName");
+      String email = request.queryParams("userEmail");
+      user.update(email, name);
+      request.session().attribute("user", user);
+      response.redirect(request.headers("Referer"));
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
     get("/users/:id/posts/new", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
       model.put("tags", Tag.all());
@@ -179,6 +198,11 @@ public class App {
       List<Post> posts = new ArrayList<Post>();
       posts.addAll(Post.search(searchInput));
       for (Post post: Tag.search(searchInput)) {
+        if (!(posts.contains(post))) {
+          posts.add(post);
+        }
+      }
+      for (Post post: User.search(searchInput)) {
         if (!(posts.contains(post))) {
           posts.add(post);
         }

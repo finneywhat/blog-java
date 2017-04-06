@@ -6,6 +6,7 @@
           <button type="button" class="btn btn-default btn-sm pull-right" data-toggle="modal" data-target="#postEditModal">Edit Post</button>
         #end
         <h2>$post.getTitle()</h2>
+        <h5>By: <a href="/users/$post.getUserId()">$post.getUserName()</a></h5>
         <p>
           #foreach($tag in $post.getTags())
             <a class="tagLink" href="/tags/$tag.getId()/posts"><span class="label label-info">$tag.getName()</span></a>
@@ -41,8 +42,11 @@
         #foreach($comment in $post.getComments())
           <div class="comment-section media">
             <div class="media-left">
-              <a href="#">
+              <a href="/users/$comment.getUserId()">
                 <img class="media-object img-rounded" src="/images/placeholder.jpg" alt="placeholder-avatar" />
+                #if($comment.getUserName())
+                  <h5 class="text-center">$comment.getUserName()</h5>
+                #end
               </a>
             </div>
             <div class="media-body">
@@ -81,8 +85,7 @@
             </select>
             <hr>
             <input id="newTagInput" type="text" class="form-control" placeholder="Add a new Tag">
-            <br>
-            <button id="newTagBtn" type="button" class="center-block btn btn-default">Add Tag</button>
+            <button id="newTagBtn" type="button" class="center-block btn btn-sm btn-info">Add Tag</button>
           </div>
         </div>
 
@@ -109,7 +112,7 @@
         <form action="/users/$user.getId()/posts/$post.getId()/delete" method="post">
           <button type="submit" class="btn btn-danger pull-left">Delete Post</button>
         </form>
-        <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+        <button type="button" class="edit-button-margin btn btn-default pull-right" data-dismiss="modal">Close</button>
         <button form="postEditForm" type="submit" class="btn btn-success pull-right">Update Post</button>
       </div>
     </div>

@@ -6,6 +6,10 @@ h3 {
   text-align: center;
 }
 
+.text-center {
+  text-align: center;
+}
+
 #loginForm {
   margin-right: 15px;
 }
@@ -89,4 +93,13 @@ hr {
 
 .popover {
   width: 400px;
+}
+
+
+.edit-button-margin {
+  margin-left: 10px;
+}
+
+#newTagBtn {
+  margin-top: 10px;
 }

@@ -35,6 +35,15 @@ public class Post {
     return this.userId;
   }
 
+  public String getUserName() {
+    try (Connection con = DB.sql2o.open()) {
+      String sql = "SELECT name FROM users WHERE id = :userId;";
+      return con.createQuery(sql)
+        .addParameter("userId", this.userId)
+        .executeAndFetchFirst(String.class);
+    }
+  }
+
   @Override
   public boolean equals(Object otherPost) {
     if (!(otherPost instanceof Post)) {

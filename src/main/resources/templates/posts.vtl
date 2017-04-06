@@ -3,6 +3,7 @@
     <div class="row">
       <div class="col-md-10 col-md-offset-1 ">
         <h3><a href="/users/$post.getUserId()/posts/$post.getId()">$post.getTitle()</a></h3>
+        <h5 class="text-center">By: <a href="/users/$post.getUserId()">$post.getUserName()</a></h5>
         <p>
           #foreach($tag in $post.getTags())
             <a class="tagLink" href="/tags/$tag.getId()/posts"><span class="label label-info">$tag.getName()</span></a>

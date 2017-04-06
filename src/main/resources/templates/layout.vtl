@@ -20,7 +20,9 @@
             <li><a href="/users/$user.getId()/posts/new">Add a Post</a></li>
           #end
         </ul>
-        #if($user)
+        #if($user.getName())
+          <p class="navbar-text navbar-right">Signed in as <a href="/users/$user.getId()">$user.getName()</a></p><a href="/logout" type="button" class="btn btn-default navbar-btn navbar-right">Sign out</a>
+        #elseif($user)
           <p class="navbar-text navbar-right">Signed in with <a href="/users/$user.getId()">$user.getEmail()</a></p><a href="/logout" type="button" class="btn btn-default navbar-btn navbar-right">Sign out</a>
         #else
           <button class="btn btn-default navbar-btn navbar-right" id="loginLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Login <span class="caret"></span></button>

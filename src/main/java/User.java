@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 public class User {
   private String email;
   private int id;
+  private String name;
 
   public User(String email) {
     this.email = email;
@@ -21,6 +22,14 @@ public class User {
 
   public int getId() {
     return this.id;
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   @Override
@@ -61,12 +70,14 @@ public class User {
     }
   }
 
-  public void update(String email) {
+  public void update(String email, String name) {
     this.email = email;
+    this.name = name;
     try (Connection con = DB.sql2o.open()) {
-      String sql = "UPDATE users SET email = :email WHERE id = :id;";
+      String sql = "UPDATE users SET (email, name) = (:email, :name) WHERE id = :id;";
       con.createQuery(sql)
         .addParameter("email", this.email)
+        .addParameter("name", this.name)
         .addParameter("id", this.id)
         .executeUpdate();
     }
@@ -91,6 +102,35 @@ public class User {
         throw new IllegalArgumentException("No user with that email.");
       }
       return user;
+    }
+  }
+
+  public List<Post> getPosts() {
+    try (Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM posts WHERE userId = :id;";
+      return con.createQuery(sql)
+        .addParameter("id", this.id)
+        .executeAndFetch(Post.class);
+    }
+  }
+
+  public List<Comment> getComments() {
+    try (Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM comments WHERE userId = :id;";
+      return con.createQuery(sql)
+        .addParameter("id", this.id)
+        .executeAndFetch(Comment.class);
+    }
+  }
+
+  public static List<Post> search(String input) {
+    String newInput = "%" + input + "%";
+    try (Connection con = DB.sql2o.open()) {
+      String sql = "SELECT posts.* FROM posts JOIN users ON (posts.userId = users.id) WHERE lower(users.name) LIKE lower(:newInput);";
+      // String sql = "SELECT * FROM posts WHERE lower(title) LIKE lower(:newInput) OR lower(content) LIKE lower(:newInput);";
+      return con.createQuery(sql)
+        .addParameter("newInput", newInput)
+        .executeAndFetch(Post.class);
     }
   }
 
