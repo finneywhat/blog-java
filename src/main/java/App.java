@@ -10,7 +10,9 @@ import java.util.Set;
 
 public class App {
   public static void main(String[] args) {
-    staticFileLocation("/public");
+    externalStaticFileLocation(String.format("%s/src/main/resources/public", System.getProperty("user.dir")));
+
+    // staticFileLocation("/public");
     String layout = "templates/layout.vtl";
 
     get("/", (request, response) -> {
@@ -70,8 +72,14 @@ public class App {
       newPost.save();
       String[] tags = request.queryParamsValues("tags");
       for (String tag : tags) {
-        Tag currentTag = Tag.find(Integer.parseInt(tag));
-        newPost.addTag(currentTag);
+        try {
+          Tag currentTag = Tag.find(Integer.parseInt(tag));
+          newPost.addTag(currentTag);
+        } catch (NumberFormatException exception) {
+          Tag newTag = new Tag(tag);
+          newTag.save();
+          newPost.addTag(newTag);
+        }
       }
       String url = String.format("/users/%d/posts/%d", userId, newPost.getId());
       response.redirect(url);
@@ -96,12 +104,13 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
-
-    post("/tags/new", (request, response) -> {
+    post("/users/:id/posts/:postId/comments/new", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
-      String tagname = request.queryParams("tag");
-      Tag newTag = new Tag(tagname);
-      newTag.save();
+      Post post = Post.find(Integer.parseInt(request.params(":postId")));
+      String commentContent = request.queryParams("commentContent");
+      User user = request.session().attribute("user");
+      Comment newComment = new Comment(commentContent, post.getId(), user.getId());
+      newComment.save();
       response.redirect(request.headers("Referer"));
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
@@ -118,16 +127,13 @@ public class App {
     get("/search", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
       String searchInput = request.queryParams("searchInput");
-      Set<Post> results = new HashSet<Post>();
-      List<Post> postresult = Post.search(searchInput);
-      List<Post> tagresult = Tag.search(searchInput);
-      System.out.println(postresult);
-      System.out.println(tagresult);
-      results.addAll(postresult);
-      results.addAll(tagresult);
-      System.out.println(results);
-      Post[] posts = results.toArray(new Post[0]);
-      System.out.println(posts);
+      List<Post> posts = new ArrayList<Post>();
+      posts.addAll(Post.search(searchInput));
+      for (Post post: Tag.search(searchInput)) {
+        if (!(posts.contains(post))) {
+          posts.add(post);
+        }
+      }
       model.put("posts", posts);
       model.put("user", request.session().attribute("user"));
       model.put("template", "templates/posts.vtl");

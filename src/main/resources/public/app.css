@@ -2,6 +2,10 @@ body {
   padding-top: 70px;
 }
 
+h3 {
+  text-align: center;
+}
+
 #loginForm {
   margin-right: 15px;
 }
@@ -14,6 +18,18 @@ body {
   margin: 15px;
 }
 
+#tagLabel {
+  margin-top: -10px;
+}
+
+#tagSelect {
+  margin-top: 20px;
+}
+
+#post-content {
+  white-space: pre-wrap;
+}
+
 .content {
   height: 62px;
   white-space: pre-wrap;
@@ -23,4 +39,34 @@ body {
 
 .tagLink:hover {
   text-decoration: none;
+}
+
+#tags {
+  height: 21px;
+}
+
+#tags label {
+  padding-left: 0px;
+}
+
+.tagRemove {
+  color: grey;
+  font-size: 11px;
+  vertical-align: text-top;
+}
+
+.tagRemove:hover {
+  color: black;
+}
+
+#blog-form {
+  border: 1px solid black;
+  box-shadow: 0 2px 8px black;
+  padding-left: 70px;
+  padding-right: 70px;
+  padding-bottom: 40px;
+}
+
+textarea {
+  resize: vertical;
 }
