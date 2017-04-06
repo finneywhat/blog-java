@@ -9,16 +9,15 @@
             <div class="dropdown">
               <button id="tagLabel" class="btn btn-sm btn-default pull-right" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tags <span class="caret"></span></button>
               <div id="tagSelect" class="dropdown-menu pull-right" aria-labelledby="tagLabel">
-                #foreach($tag in $tags)
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" value="$tag.getId()">
-                      $tag.getName()
-                    </label>
-                  </div>
-                #end
+                <select multiple class="form-control">
+                  #foreach($tag in $tags)
+                    <option value="$tag.getId()">$tag.getName()</option>
+                  #end
+                </select>
+                <hr>
                 <input id="newTagInput" type="text" class="form-control" placeholder="Add a new Tag">
-                <button id="newTagBtn" type="button" class="btn btn-default">Add Tag</button>
+                <br>
+                <button id="newTagBtn" type="button" class="center-block btn btn-default">Add Tag</button>
               </div>
             </div>
           </div>

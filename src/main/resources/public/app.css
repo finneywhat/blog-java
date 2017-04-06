@@ -14,9 +14,10 @@ h3 {
   margin: 15px;
 }
 
-#tagSelect > div {
-  margin: 15px;
+#tagSelect > select {
+  height: 150px;
 }
+
 
 #tagLabel {
   margin-top: -10px;
@@ -24,6 +25,7 @@ h3 {
 
 #tagSelect {
   margin-top: 20px;
+  padding: 10px;
 }
 
 #post-content {
@@ -60,7 +62,7 @@ h3 {
 }
 
 #blog-form {
-  border: 1px solid black;
+  /*border: 1px solid black;*/
   box-shadow: 0 2px 8px black;
   padding-left: 70px;
   padding-right: 70px;
@@ -69,4 +71,22 @@ h3 {
 
 textarea {
   resize: vertical;
+}
+
+.comment-section {
+  /*background-color: white;*/
+  /*height: 50px;*/
+  /*border: 1px solid black;*/
+}
+
+img {
+  width: 100px;
+}
+
+hr {
+  border-top: 1px solid #bbb;
+}
+
+.popover {
+  width: 400px;
 }

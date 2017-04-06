@@ -3,7 +3,7 @@
     <div class="col-md-8 col-md-offset-2">
       <div class="well" id="blog-form">
         #if($user.getId() == $post.getUserId())
-          <button type="button" class="btn btn-default" data-toggle="modal" data-target="#postEditModal">Edit Post</button>
+          <button type="button" class="btn btn-default btn-sm pull-right" data-toggle="modal" data-target="#postEditModal">Edit Post</button>
         #end
         <h2>$post.getTitle()</h2>
         <p>
@@ -20,7 +20,8 @@
     <div class="row">
       <div class="col-md-8 col-md-offset-2">
         <div class="well" id="blog-form">
-          <form action="/users/$user.getId()/posts/$post.getId()/comments/new" method="post">
+          <h4>Add a Comment</h4>
+          <form action="/users/$post.getUserId()/posts/$post.getId()/comments/new" method="post">
             <div class="form-group">
               <textarea class="form-control" name="commentContent" rows="2"></textarea>
             </div>
@@ -35,22 +36,32 @@
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <div class="well" id="blog-form">
+        <h4>Comments</h4>
+        <hr>
         #foreach($comment in $post.getComments())
-          <div class="media">
+          <div class="comment-section media">
             <div class="media-left">
               <a href="#">
-                <img class="media-object" src="" alt="" />
+                <img class="media-object img-rounded" src="/images/placeholder.jpg" alt="placeholder-avatar" />
               </a>
             </div>
             <div class="media-body">
+              #if($user.getId() == $comment.getUserId())
+                <button type="button" class="pull-right btn btn-xs btn-danger" data-container="body" data-toggle="popover" data-placement="left" title="Edit this comment" data-content='<form action="/users/$post.getUserId()/posts/$post.getId()/comments/$comment.getId()/update" method="post"><div class="form-group"><textarea class="form-control" name="editContent" rows="2" columns="40">$comment.getContent()</textarea></div><button type="submit" class="btn btn-success pull-right">Update</button></form><form action="/users/$post.getUserId()/posts/$post.getId()/comments/$comment.getId()/delete" method="post"><button type="submit" class="btn btn-danger pull-left">Delete</button></form>' data-html='true'>Edit</button>
+              #elseif($user.getId() == $post.getUserId())
+                <button type="button" class="pull-right btn btn-xs btn-danger" data-container="body" data-toggle="popover" data-placement="left" title="Delete this comment" data-content='<form action="/users/$post.getUserId()/posts/$post.getId()/comments/$comment.getId()/delete" method="post"><button type="submit" class="center-block btn btn-danger">Delete Post</button></form>' data-trigger="focus" data-html='true'>Edit</button>
+              #end
               <p>$comment.getContent()</p>
             </div>
           </div>
+          <hr>
         #end
       </div>
     </div>
   </div>
 </div>
+
+
 <div class="modal fade" id="postEditModal" tabindex="-1" role="dialog" aria-labelledby="postEditModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -59,14 +70,38 @@
         <h4 class="modal-title" id="postEditModalLabel">Edit Post</h4>
       </div>
       <div class="modal-body">
+
+        <div class="dropdown">
+          <button id="tagLabel" class="btn btn-sm btn-default pull-right" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tags <span class="caret"></span></button>
+          <div id="tagSelect" class="dropdown-menu pull-right" aria-labelledby="tagLabel">
+            <select multiple class="form-control">
+              #foreach($tag in $tags)
+                <option value="$tag.getId()">$tag.getName()</option>
+              #end
+            </select>
+            <hr>
+            <input id="newTagInput" type="text" class="form-control" placeholder="Add a new Tag">
+            <br>
+            <button id="newTagBtn" type="button" class="center-block btn btn-default">Add Tag</button>
+          </div>
+        </div>
+
         <form id="postEditForm" action="/users/$user.getId()/posts/$post.getId()/update" method="post">
           <div class="form-group">
             <label for="title">Title</label>
             <input value="$post.getTitle()" type="text" name="title" class="form-control" required>
           </div>
+          <div id="tags" class="form-group">
+            #foreach($tag in $post.getTags())
+              <label id="$tag.getName()" class='checkbox-inline'>
+                <input checked type='hidden' name='tags' value="$tag.getId()">
+                <span class='label label-info'>$tag.getName()</span><span class='tagRemove glyphicon glyphicon-remove'></span>
+              </label>
+            #end
+          </div>
           <div class="form-group">
             <label for="content">Content</label>
-            <textarea name="content" class="form-control" rows="3" cols="40">$post.getContent()</textarea>
+            <textarea name="content" class="form-control" rows="8" cols="40">$post.getContent()</textarea>
           </div>
         </form>
       </div>

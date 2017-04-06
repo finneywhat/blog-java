@@ -47,6 +47,13 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
+    get("/logout", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      request.session().removeAttribute("user");
+      response.redirect(request.headers("Referer"));
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
     get("/users/:id/posts/new", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
       model.put("tags", Tag.all());
@@ -58,6 +65,7 @@ public class App {
     get("/users/:id/posts/:postId", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
       model.put("post", Post.find(Integer.parseInt(request.params(":postId"))));
+      model.put("tags", Tag.all());
       model.put("user", request.session().attribute("user"));
       model.put("template", "templates/post.vtl");
       return new ModelAndView(model, layout);
@@ -92,6 +100,30 @@ public class App {
       String title = request.queryParams("title");
       String content = request.queryParams("content");
       post.update(title, content);
+      List<Tag> oldTags = post.getTags();
+      List<Tag> newTags = new ArrayList<Tag>();
+      String[] tags = request.queryParamsValues("tags");
+      for (String tag: tags) {
+        try {
+          Tag currentTag = Tag.find(Integer.parseInt(tag));
+          if (!(oldTags.contains(currentTag))) {
+            post.addTag(currentTag);
+            newTags.add(currentTag);
+          } else {
+            newTags.add(currentTag);
+          }
+        }catch (NumberFormatException exception) {
+          Tag newTag = new Tag(tag);
+          newTag.save();
+          post.addTag(newTag);
+          newTags.add(newTag);
+        }
+      }
+      for (Tag oldTag: oldTags) {
+        if (!(newTags.contains(oldTag))) {
+          post.removeTag(oldTag);
+        }
+      }
       response.redirect(request.headers("Referer"));
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
@@ -111,6 +143,23 @@ public class App {
       User user = request.session().attribute("user");
       Comment newComment = new Comment(commentContent, post.getId(), user.getId());
       newComment.save();
+      response.redirect(request.headers("Referer"));
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/users/:id/posts/:postId/comments/:commentId/update", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      Comment comment = Comment.find(Integer.parseInt(request.params(":commentId")));
+      String commentContent = request.queryParams("editContent");
+      comment.update(commentContent);
+      response.redirect(request.headers("Referer"));
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/users/:id/posts/:postId/comments/:commentId/delete", (request, response) -> {
+      Map<String, Object> model = new HashMap<String, Object>();
+      Comment comment = Comment.find(Integer.parseInt(request.params(":commentId")));
+      comment.delete();
       response.redirect(request.headers("Referer"));
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
