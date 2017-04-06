@@ -103,3 +103,7 @@ hr {
 #newTagBtn {
   margin-top: 10px;
 }
+
+#searchBox {
+  width: 250px;
+}

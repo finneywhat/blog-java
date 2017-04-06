@@ -75,9 +75,15 @@ public class App {
 
     get("/users/:id/posts/new", (request, response) -> {
       Map<String, Object> model = new HashMap<String, Object>();
-      model.put("tags", Tag.all());
-      model.put("user", request.session().attribute("user"));
-      model.put("template", "templates/post-form.vtl");
+      User loggedInUser = request.session().attribute("user");
+      User user = User.find(Integer.parseInt(request.params(":id")));
+      if (user.equals(loggedInUser)) {
+        model.put("tags", Tag.all());
+        model.put("user", user);
+        model.put("template", "templates/post-form.vtl");
+      } else {
+        response.redirect("/");
+      }
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
